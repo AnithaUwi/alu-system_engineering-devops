@@ -13,19 +13,22 @@ sed -i 's/listen \[::\]:80 default_server;/listen \[::\]:80;/' /etc/nginx/sites-
 sed -i 's|root /var/www/html;|root /var/www/html;\n    index index.html;|' /etc/nginx/sites-available/default
 sed -i '/server_name _;/a \n    location / {\n        try_files $uri /index.html;\n    }' /etc/nginx/sites-available/default
 
+# Remove the default index page to avoid conflicts
+rm -f /var/www/html/index.nginx-debian.html
+
 # Create a custom HTML page containing "Holberton School"
 echo '<html><body>Holberton School for the win!</body></html>' > /var/www/html/index.html
 
 # Set correct file permissions
 chmod 644 /var/www/html/index.html
 
-# Reload Nginx to apply changes
-service nginx reload
+# Restart Nginx to apply changes
+service nginx restart
 
 # Verify Nginx is running and listening on port 80
-service nginx status
-netstat -tulnp | grep nginx
+service nginx status || echo "Error: Nginx is not running"
+netstat -tulnp | grep nginx || echo "Error: Nginx is not listening on port 80"
 
 # Test if the page contains "Holberton School"
-curl -s localhost | grep "Holberton School"
+curl -s localhost | grep "Holberton School" || echo "Error: Expected content not found on the page"
 
