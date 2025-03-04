@@ -1,34 +1,17 @@
 #!/usr/bin/env bash
-# This script installs and configures Nginx on an Ubuntu server
+# This script installs Nginx, configures it to listen on port 80, and serves a page with the text "Holberton School".
 
-# Update package list and install Nginx
+# Update the package list and install nginx
 apt-get update -y
-apt-get install -y nginx
+apt-get install nginx -y
 
-# Ensure Nginx is listening on port 80
-sed -i 's/listen 80 default_server;/listen 80;/' /etc/nginx/sites-available/default
-sed -i 's/listen \[::\]:80 default_server;/listen \[::\]:80;/' /etc/nginx/sites-available/default
+# Create a simple HTML file that contains "Holberton School"
+echo "Holberton School for the win!" > /var/www/html/index.html
 
-# Ensure the root directory is correctly set and index file is prioritized
-sed -i 's|root /var/www/html;|root /var/www/html;\n    index index.html;|' /etc/nginx/sites-available/default
-sed -i '/server_name _;/a \n    location / {\n        try_files $uri /index.html;\n    }' /etc/nginx/sites-available/default
+# Ensure Nginx is listening on port 80 by editing the default configuration (it is usually set by default)
+# Make sure the server block is listening on port 80
+sed -i 's/listen 80 default_server;/listen 80;/g' /etc/nginx/sites-available/default
 
-# Remove the default index page to avoid conflicts
-rm -f /var/www/html/index.nginx-debian.html
-
-# Create a custom HTML page containing "Holberton School"
-echo '<html><body>Holberton School for the win!</body></html>' > /var/www/html/index.html
-
-# Set correct file permissions
-chmod 644 /var/www/html/index.html
-
-# Restart Nginx to apply changes
-service nginx restart
-
-# Verify Nginx is running and listening on port 80
-service nginx status || echo "Error: Nginx is not running"
-netstat -tulnp | grep nginx || echo "Error: Nginx is not listening on port 80"
-
-# Test if the page contains "Holberton School"
-curl -s localhost | grep "Holberton School" || echo "Error: Expected content not found on the page"
+# Reload Nginx to apply the configuration changes
+nginx -s reload
 
