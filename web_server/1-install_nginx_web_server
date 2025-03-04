@@ -9,9 +9,19 @@ apt-get install -y nginx
 sed -i 's/listen 80 default_server;/listen 80;/' /etc/nginx/sites-available/default
 sed -i 's/listen \[::\]:80 default_server;/listen \[::\]:80;/' /etc/nginx/sites-available/default
 
+# Ensure the root directory is correctly set
+sed -i 's|root /var/www/html;|root /var/www/html;\n    index index.html index.nginx-debian.html;|' /etc/nginx/sites-available/default
+
 # Create a custom HTML page containing "Holberton School"
 echo 'Holberton School for the win!' > /var/www/html/index.html
 
 # Restart Nginx without using systemctl
 service nginx restart
+
+# Verify Nginx is running and listening on port 80
+service nginx status
+netstat -tulnp | grep nginx
+
+# Test if the page contains "Holberton School"
+curl -s localhost | grep "Holberton School"
 
