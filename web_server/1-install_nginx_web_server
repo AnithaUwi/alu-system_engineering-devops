@@ -4,7 +4,7 @@
 # Check if the script is being run as root
 if [ "$EUID" -ne 0 ]; then
 	    echo "Please run this script as root or with sudo."
-	    exit 1
+	        exit 1
 fi
 
 # Update package list and install Nginx
@@ -17,6 +17,9 @@ echo "Holberton School" > /var/www/html/index.html
 # Configure Nginx to listen on port 80
 sed -i 's/listen 80 default_server;/listen 80;/g' /etc/nginx/sites-enabled/default
 sed -i 's/listen \[::\]:80 default_server;/listen [::]:80;/g' /etc/nginx/sites-enabled/default
+
+# Ensure the root directive points to /var/www/html
+sed -i 's|root /var/www/html;|root /var/www/html;|g' /etc/nginx/sites-enabled/default
 
 # Restart Nginx to apply changes
 service nginx restart
