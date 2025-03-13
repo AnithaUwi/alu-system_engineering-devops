@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Update and install Nginx
+sudo apt update
+sudo apt install -y nginx
+
+# Backup the default configuration file
+sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
+
+# Edit the Nginx default configuration to add the redirect
+sudo sed -i '/server_name _;/a \    location /redirect_me {\n        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;\n    }' /etc/nginx/sites-available/default
+
+# Reload Nginx to apply changes
+sudo systemctl reload nginx
+
+# Verify the redirect by using curl (This will just print headers, as curl -sI)
+curl -sI http://localhost/redirect_me
+
