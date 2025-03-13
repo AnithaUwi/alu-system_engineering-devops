@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# This script configures Nginx to serve a custom 404 error page with the message "Ceci n'est pas une page".
+# This script configures Nginx to serve a custom 404 error page with the message "Ceci n'est pas une page"
 
 # Step 1: Update the package list and install Nginx if not already installed
 apt-get update
@@ -12,22 +12,26 @@ echo "Ceci n'est pas une page" | sudo tee /etc/nginx/html/404.html
 sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
 
 # Step 4: Modify the Nginx configuration to set up the custom 404 page
+# We're going to add an error page directive and the location block for the 404 page.
 sudo sed -i '/server_name _;/a \
 	    error_page 404 /404.html;\
 	        location = /404.html {\
 		        root /etc/nginx/html;\
-			    }' /etc/nginx/sites-available/default
+			        internal;\
+				    }' /etc/nginx/sites-available/default
 
-			    # Step 5: Test the Nginx configuration for any syntax errors
-			    nginx -t
+				    # Step 5: Test the Nginx configuration for any syntax errors
+				    nginx -t
 
-			    # Step 6: If the test is successful, restart Nginx to apply changes
-			    if [ $? -eq 0 ]; then
-				        sudo systemctl restart nginx
-				else
-					    echo "Nginx configuration test failed. Please check the config."
-			    fi
+				    # Step 6: If the test is successful, restart Nginx to apply changes
+				    if [ $? -eq 0 ]; then
+					        sudo systemctl restart nginx
+					else
+						    echo "Nginx configuration test failed. Please check the config."
+						        exit 1
+				    fi
 
-			    # Step 7: Verify by trying to access a non-existent page (e.g., /xyz)
-			    curl -sI http://localhost/xyz
+				    # Step 7: Verify by trying to access a non-existent page (e.g., /xyz)
+				    echo "Testing custom 404 page..."
+				    curl -sI http://localhost/xyz
 
