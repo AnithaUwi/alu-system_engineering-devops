@@ -1,19 +1,25 @@
 #!/usr/bin/env bash
-# This script configures Nginx to redirect /redirect_me to a permanent (301) URL.
+# bash script to install nginx web server & make the following configurations:
 
-# Update and install Nginx
-sudo apt update
-sudo apt install -y nginx
+apt-get update
+apt-get install -y nginx
 
-# Backup the default configuration file
-sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
+mkdir /etc/nginx/html
 
-# Edit the Nginx default configuration to add the redirect
-sudo sed -i '/server_name _;/a \    location /redirect_me {\n        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;\n    }' /etc/nginx/sites-available/default
+touch /etc/nginx/html/index.html
 
-# Reload Nginx to apply changes
-sudo systemctl reload nginx
+echo "Holberton School" > /etc/nginx/html/index.html
+printf %s "server {
+     listen      80 default_server;
+     listen      [::]:80 default_server;
+     root        /etc/nginx/html;
+     index       index.html index.htm;
 
-# Verify the redirect by using curl (This will just print headers, as curl -sI)
-curl -sI http://localhost/redirect_me
+     location /redirect_me {
+         return 301 http://youtube.com/;
+				     }
+			     }
+     " > /etc/nginx/sites-available/default
 
+
+sudo service nginx restart
