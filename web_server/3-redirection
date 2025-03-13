@@ -1,25 +1,36 @@
 #!/usr/bin/env bash
-# bash script to install nginx web server & make the following configurations:
+# Bash script to install nginx web server & make the following configurations:
 
+# Update package list and install Nginx
 apt-get update
 apt-get install -y nginx
 
-mkdir /etc/nginx/html
+# Create the root directory for Nginx
+mkdir -p /etc/nginx/html
 
-touch /etc/nginx/html/index.html
-
+# Create the index.html file
 echo "Holberton School" > /etc/nginx/html/index.html
+
+# Write the Nginx server configuration with redirect
 printf %s "server {
-     listen      80 default_server;
-     listen      [::]:80 default_server;
-     root        /etc/nginx/html;
-     index       index.html index.htm;
+    listen      80 default_server;
+        listen      [::]:80 default_server;
+	    root        /etc/nginx/html;
+	        index       index.html index.htm;
 
-     location /redirect_me {
-         return 301 http://youtube.com/;
-				     }
-			     }
-     " > /etc/nginx/sites-available/default
+		    location /redirect_me {
+		            return 301 http://youtube.com/;
+			        }
+			}
+			" > /etc/nginx/sites-available/default
 
+			# Test the configuration for syntax errors before restarting Nginx
+			nginx -t
 
-sudo service nginx restart
+			# If nginx -t passes, restart the Nginx service
+			if [ $? -eq 0 ]; then
+				    sudo service nginx restart
+			    else
+				        echo "Nginx configuration test failed. Please check the config."
+			fi
+
