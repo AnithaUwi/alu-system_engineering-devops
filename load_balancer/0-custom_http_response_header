@@ -9,7 +9,7 @@ sudo ufw allow 'Nginx HTTP';
 sudo ufw allow 'OpenSSH';
 
 echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html;
-custom_header="server_name_;\n\tadd_header X-served-by \$HOSTNAME;"
+custom_header="server_name_;\n\tadd_header X-served-By \$HOSTNAME;"
 sudo sed -i "s|server_name_;|$custom_header|" /etc/nginx/sites-enable/default
 
 sudo service nginx restart;
